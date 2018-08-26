@@ -11,35 +11,42 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      username: localStorage.getItem('username') == null ? ""
+          : localStorage.getItem('username'),
+      loggedIn: localStorage.getItem('loggedIn') == null ? false
+          : localStorage.getItem('loggedIn'),
       tasks: JSON.parse(localStorage.getItem('taskData')) == null ? []
           : JSON.parse(localStorage.getItem('taskData')),
       newTaskName: "",
-      q1: localStorage.getItem('q1') < 10 ? 10
-          : parseInt(localStorage.getItem('q1')),
-      q2: localStorage.getItem('q2') < 10 ? 10
-          : parseInt(localStorage.getItem('q2')),
-      q3: localStorage.getItem('q3') < 10 ? 10
-          : parseInt(localStorage.getItem('q3')),
-      q4: localStorage.getItem('q4') < 10 ? 10
-          : parseInt(localStorage.getItem('q4')),
+      q1: localStorage.getItem('q1') < 10 ? 10 : parseInt(
+          localStorage.getItem('q1')),
+      q2: localStorage.getItem('q2') < 10 ? 10 : parseInt(
+          localStorage.getItem('q2')),
+      q3: localStorage.getItem('q3') < 10 ? 10 : parseInt(
+          localStorage.getItem('q3')),
+      q4: localStorage.getItem('q4') < 10 ? 10 : parseInt(
+          localStorage.getItem('q4')),
       taskIdToDelete: 0,
-      lastId: localStorage.getItem('taskLastId') == null ? 0
-          : localStorage.getItem('taskLastId'),
+      lastId: localStorage.getItem('taskLastId') == null ?
+          0 : localStorage.getItem('taskLastId'),
       openDisplay: 0,
-      timeLogList: JSON.parse(localStorage.getItem('timeLogList')) == null ? []
-          : JSON.parse(localStorage.getItem('timeLogList')),
+      timeLogList: JSON.parse(localStorage.getItem('timeLogList')) == null ?
+          [] : JSON.parse(localStorage.getItem('timeLogList')),
       closedTaskList: JSON.parse(localStorage.getItem('closedTaskList')) == null
-          ? []
-          : JSON.parse(localStorage.getItem('closedTaskList')),
+          ?
+          [] : JSON.parse(localStorage.getItem('closedTaskList')),
       isWorkReported: true
     };
 
+    this.login = this.login.bind(this);
     this.handleSaveData = this.handleSaveData.bind(this);
     App.sortTasks = App.sortTasks.bind(this);
     this.logTask = this.logTask.bind(this);
     this.reportBadWork = this.reportBadWork.bind(this);
     this.closeTask = this.closeTask.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
+    this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    this.handleKeyPressLogin = this.handleKeyPressLogin.bind(this);
     this.handleTaskNameChange = this.handleTaskNameChange.bind(this);
     this.createQ1Task = this.createQ1Task.bind(this);
     this.createQ2Task = this.createQ2Task.bind(this);
@@ -48,9 +55,26 @@ class App extends Component {
     this.clearAllData = this.clearAllData.bind(this);
   }
 
+  handleKeyPressLogin(target) {
+    if (target.charCode === 13) {
+      this.login();
+    }
+
+  }
+
+  login() {
+    if (this.state.username.length > 2) {
+      this.setState({
+        loggedIn: true
+      })
+    }
+  }
+
   clearAllData() {
     localStorage.clear();
     this.setState({
+      username: "",
+      loggedIn: false,
       tasks: [],
       newTaskName: "",
       q1: 10,
@@ -65,8 +89,8 @@ class App extends Component {
       isWorkReported: true
     })
   }
+
   handleSaveData() {
-    console.log("Data saved");
     localStorage.setItem('taskData', JSON.stringify(this.state.tasks));
     localStorage.setItem('timeLogList', JSON.stringify(this.state.timeLogList));
     localStorage.setItem('closedTaskList',
@@ -76,14 +100,19 @@ class App extends Component {
     localStorage.setItem('q2', this.state.q2);
     localStorage.setItem('q3', this.state.q3);
     localStorage.setItem('q4', this.state.q4);
+    localStorage.setItem('username', this.state.username);
+    localStorage.setItem('loggedIn', this.state.loggedIn);
   }
 
   handleTaskNameChange(e) {
     this.setState({
-      tasks: this.state.tasks,
-      newTaskName: e.target.value,
-      taskIdToDelete: this.state.taskIdToDelete,
-      lastId: this.state.lastId
+      newTaskName: e.target.value
+    })
+  }
+
+  handleUsernameChange(e) {
+    this.setState({
+      username: e.target.value
     })
   }
 
@@ -147,10 +176,8 @@ class App extends Component {
     const task = {
       id: id,
       sort: sort,
-      field: {
-        name: taskname,
-        type: type
-      }
+      name: taskname,
+      type: type
     };
     return [task];
   }
@@ -180,8 +207,8 @@ class App extends Component {
   logTask(task) {
     let taskForLog = {
       time: new Date(),
-      taskType: task.field.type,
-      taskName: task.field.name
+      taskType: task.type,
+      taskName: task.name
     };
     let timeLogList = this.state.timeLogList.concat([taskForLog]);
     this.setState({
@@ -190,11 +217,11 @@ class App extends Component {
       openDisplay: 2
     });
     localStorage.setItem("timeLogList", JSON.stringify(timeLogList));
-    if (task.field.type === 'q1') {
+    if (task.type === 'q1') {
       this.setState({q1: this.state.q1 + 10})
-    } else if (task.field.type === 'q2') {
+    } else if (task.type === 'q2') {
       this.setState({q2: this.state.q2 + 10})
-    } else if (task.field.type === 'q3') {
+    } else if (task.type === 'q3') {
       this.setState({q3: this.state.q3 + 10})
     } else {
       this.setState({q4: this.state.q4 + 10})
@@ -220,8 +247,8 @@ class App extends Component {
     console.log("Close " + this.state.closedTaskList.size);
     let taskToClose = {
       time: new Date(),
-      taskType: task.field.type,
-      taskName: task.field.name
+      taskType: task.type,
+      taskName: task.name
     };
     let closedTaskList = this.state.closedTaskList.concat([taskToClose]);
     this.setState({
@@ -229,11 +256,11 @@ class App extends Component {
       isWorkReported: true
     });
     localStorage.setItem("closedTaskList", JSON.stringify(closedTaskList));
-    if (task.field.type === 'q1') {
+    if (task.type === 'q1') {
       this.setState({q1: this.state.q1 + 10})
-    } else if (task.field.type === 'q2') {
+    } else if (task.type === 'q2') {
       this.setState({q2: this.state.q2 + 10})
-    } else if (task.field.type === 'q3') {
+    } else if (task.type === 'q3') {
       this.setState({q3: this.state.q3 + 10})
     } else {
       this.setState({q4: this.state.q4 + 10})
@@ -249,80 +276,100 @@ class App extends Component {
             <h1 className="App-title">Nastushenka Performer</h1>
           </header>
           <br/>
-          <div className="container">
-            <Button onClick={() => {
-              this.setState({
-                openDisplay: this.state.openDisplay === 0 ? 1
-                    : this.state.openDisplay === 1 ? 2 : 0
-              })
-            }}>Switch</Button>
+          <div className="container" hidden={this.state.loggedIn}>
+            <FormGroup>
+              <ControlLabel htmlFor="username">Enter username</ControlLabel>
+              <FormControl
+                  value={this.state.username}
+                  onChange={this.handleUsernameChange}
+                  onKeyPress={this.handleKeyPressLogin}
+                  id="username" type="text"/>
+            </FormGroup>
+            <FormGroup>
+              <Button
+                  className="btn-dark"
+                  onClick={this.login}>
+                Login
+              </Button>
+            </FormGroup>
           </div>
-          <div>
-            <ReactInterval
-                timeout={1000 * 5}
-                enabled={true}
-                callback={this.handleSaveData}/>
-            <ReactInterval
-                timeout={1000 * 60 * 30}
-                enabled={true}
-                callback={() => {
-                  this.setState({
-                    openDisplay: 1,
-                    isWorkReported: false
-                  });
-                  setTimeout(() => {
-                    if (!this.state.isWorkReported) {
-                      this.reportBadWork();
-                      this.setState({
-                        isWorkReported: true,
-                        openDisplay: 0
-                      })
-                    }
-                  }, 1000 * 60 * 5)
-                }}/>
-          </div>
-          <div hidden={this.state.openDisplay !== 1} className="container">
-            <h1>Log your work in last 30 minutes</h1>
+          <div hidden={!this.state.loggedIn}>
             <div className="container">
-              <ReactTable
-                  data={this.state.tasks}
-                  columns={[
-                    {
-                      Header: "Task in progress",
-                      id: "taskLogButton",
-                      accessor: task => task,
-                      Cell: row => (
-                          <Button
-                              className={row.value.field.type}
-                              value={row.value}
-                              onClick={() => this.logTask(row.value)}>
-                            {row.value.field.name}
-                          </Button>
-                      )
-                    },
-                    {
-                      Header: "Task Finished",
-                      id: "taskCloseButton",
-                      accessor: task => task,
-                      maxWidth: 200,
-                      Cell: row => (
-                          <Button
-                              value={row.value.id}
-                              onClick={() => this.closeTask(row.value)}>
-                            Close the task
-                          </Button>
-                      )
-                    }
-                  ]}
-                  defaultPageSize={10}
-                  className="-striped -highlight"
-              />
+              <Button
+                  className="btn-dark"
+                  onClick={() => {
+                    this.setState({
+                      openDisplay: this.state.openDisplay === 0 ? 1
+                          : this.state.openDisplay === 1 ? 2 : 0
+                    })
+                  }}>Switch</Button>
             </div>
-          </div>
-          <div hidden={this.state.openDisplay !== 0} className="container">
-            <div className="container">
-              <h1>Manage your tasks</h1>
-              <form id="myForm">
+            <div>
+              <ReactInterval
+                  timeout={1000 * 5}
+                  enabled={true}
+                  callback={this.handleSaveData}/>
+              <ReactInterval
+                  timeout={1000 * 60 * 30}
+                  enabled={true}
+                  callback={() => {
+                    this.setState({
+                      openDisplay: 1,
+                      isWorkReported: false
+                    });
+                    setTimeout(() => {
+                      if (!this.state.isWorkReported) {
+                        this.reportBadWork();
+                        this.setState({
+                          isWorkReported: true,
+                          openDisplay: 0
+                        })
+                      }
+                    }, 1000 * 60 * 5)
+                  }}/>
+            </div>
+            <div hidden={this.state.openDisplay !== 1} className="container">
+              <h1>Log your work in last 30 minutes</h1>
+              <div className="container">
+                <ReactTable
+                    data={this.state.tasks}
+                    columns={[
+                      {
+                        Header: "Task in progress",
+                        id: "taskLogButton",
+                        accessor: task => task,
+                        Cell: row => (
+                            <Button
+                                className={row.value.type}
+                                value={row.value}
+                                onClick={() => this.logTask(row.value)}>
+                              {row.value.name}
+                            </Button>
+                        )
+                      },
+                      {
+                        Header: "Task Finished",
+                        id: "taskCloseButton",
+                        accessor: task => task,
+                        maxWidth: 200,
+                        Cell: row => (
+                            <Button
+                                className="btn-success"
+                                value={row.value.id}
+                                onClick={() => this.closeTask(row.value)}>
+                              Close the task
+                            </Button>
+                        )
+                      }
+                    ]}
+                    defaultPageSize={10}
+                    className="-striped -highlight"
+                />
+              </div>
+            </div>
+            <div hidden={this.state.openDisplay !== 0} className="container">
+              <div className="container">
+                <h1>Manage your tasks</h1>
                 <FormGroup>
                   <ControlLabel htmlFor="taskName">Enter task
                     name</ControlLabel>
@@ -359,124 +406,130 @@ class App extends Component {
                     Not Important and Not Urgent
                   </Button>
                 </FormGroup>
-              </form>
+              </div>
+              <div className="container">
+                <ReactTable
+                    data={this.state.tasks}
+                    columns={[
+                      {
+                        Header: "Task name",
+                        id: "taskNameColumn",
+                        accessor: task => task,
+                        Cell: row => (
+                            <div className={row.value.type}>
+                              <p>{row.value.name}</p>
+                            </div>
+                        )
+                      },
+                      {
+                        Header: "Delete",
+                        accessor: "id",
+                        maxWidth: 200,
+                        Cell: row => (
+                            <Button className="btn-danger" value={row.value}
+                                    onClick={() => this.deleteTask(row.value)}>
+                              Delete
+                            </Button>
+                        )
+                      }
+                    ]}
+                    defaultPageSize={10}
+                    className="-striped -highlight"
+                />
+              </div>
             </div>
-            <div className="container">
-              <ReactTable
-                  data={this.state.tasks}
-                  columns={[
-                    {
-                      Header: "Task name",
-                      accessor: "field",
-                      Cell: row => (
-                          <div className={row.value.type}>
-                            <p>{row.value.name}</p>
-                          </div>
-                      )
-                    },
-                    {
-                      Header: "Delete",
-                      accessor: "id",
-                      maxWidth: 200,
-                      Cell: row => (
-                          <Button value={row.value}
-                                  onClick={() => this.deleteTask(row.value)}>
-                            Delete
-                          </Button>
-                      )
-                    }
-                  ]}
-                  defaultPageSize={10}
-                  className="-striped -highlight"
-              />
+            <div hidden={this.state.openDisplay !== 2} className="container">
+              <br/>
+              <div className="container">
+                <PieChart style={{height: 150}}
+                          animate={true}
+                          lineWidth={50}
+                          data={[
+                            {value: this.state.q1, color: '#c13932'},
+                            {value: this.state.q2, color: '#40aa40'},
+                            {value: this.state.q3, color: '#559faa'},
+                            {value: this.state.q4, color: '#daa520'}
+                          ]}
+                />
+                <h2>Logged work</h2>
+                <ReactTable
+                    data={this.state.timeLogList}
+                    columns={[
+                      {
+                        Header: "Time",
+                        maxWidth: 200,
+                        accessor: "time",
+                        Cell: row => (
+                            <p>{row.value.toString()}</p>
+                        )
+                      },
+                      {
+                        Header: "Task Type",
+                        maxWidth: 200,
+                        accessor: "taskType",
+                        Cell: row => (
+                            <div className={row.value}>
+                              <p>{row.value}</p>
+                            </div>
+                        )
+                      },
+                      {
+                        Header: "Task Name",
+                        accessor: "taskName",
+                        Cell: row => (
+                            <p>{row.value}</p>
+                        )
+                      }
+                    ]}
+                    defaultPageSize={5}
+                    className="-striped -highlight"
+                />
+                <h2>Completed work</h2>
+                <ReactTable
+                    data={this.state.closedTaskList}
+                    columns={[
+                      {
+                        Header: "Time",
+                        maxWidth: 200,
+                        accessor: "time",
+                        Cell: row => (
+                            <p>{row.value.toString()}</p>
+                        )
+                      },
+                      {
+                        Header: "Task Type",
+                        maxWidth: 200,
+                        accessor: "taskType",
+                        Cell: row => (
+                            <div className={row.value}>
+                              <p>{row.value}</p>
+                            </div>
+                        )
+                      },
+                      {
+                        Header: "Task Name",
+                        accessor: "taskName",
+                        Cell: row => (
+                            <p>{row.value}</p>
+                        )
+                      }
+                    ]}
+                    defaultPageSize={5}
+                    className="-striped -highlight"
+                />
+              </div>
             </div>
           </div>
-          <div hidden={this.state.openDisplay !== 2} className="container">
-            <div className="container">
-              <PieChart style={{height: 150}}
-                        animate={true}
-                        lineWidth={50}
-                        data={[
-                          {value: this.state.q1, color: '#c13932'},
-                          {value: this.state.q2, color: '#40aa40'},
-                          {value: this.state.q3, color: '#559faa'},
-                          {value: this.state.q4, color: '#daa520'}
-                        ]}
-              />
-              <h2>Logged work</h2>
-              <ReactTable
-                  data={this.state.timeLogList}
-                  columns={[
-                    {
-                      Header: "Time",
-                      maxWidth: 200,
-                      accessor: "time",
-                      Cell: row => (
-                          <p>{row.value.toString()}</p>
-                      )
-                    },
-                    {
-                      Header: "Task Type",
-                      maxWidth: 200,
-                      accessor: "taskType",
-                      Cell: row => (
-                          <div className={row.value}>
-                            <p>{row.value}</p>
-                          </div>
-                      )
-                    },
-                    {
-                      Header: "Task Name",
-                      accessor: "taskName",
-                      Cell: row => (
-                          <p>{row.value}</p>
-                      )
-                    }
-                  ]}
-                  defaultPageSize={5}
-                  className="-striped -highlight"
-              />
-              <h2>Completed work</h2>
-              <ReactTable
-                  data={this.state.closedTaskList}
-                  columns={[
-                    {
-                      Header: "Time",
-                      maxWidth: 200,
-                      accessor: "time",
-                      Cell: row => (
-                          <p>{row.value.toString()}</p>
-                      )
-                    },
-                    {
-                      Header: "Task Type",
-                      maxWidth: 200,
-                      accessor: "taskType",
-                      Cell: row => (
-                          <div className={row.value}>
-                            <p>{row.value}</p>
-                          </div>
-                      )
-                    },
-                    {
-                      Header: "Task Name",
-                      accessor: "taskName",
-                      Cell: row => (
-                          <p>{row.value}</p>
-                      )
-                    }
-                  ]}
-                  defaultPageSize={5}
-                  className="-striped -highlight"
-              />
-            </div>
-          </div>
+          <br/>
+          <br/>
           <Button className="btn-danger" onClick={this.clearAllData}>
             Clear All Data
           </Button>
-          <p className="App-intro">
-            Thank you for your attention
+          <p hidden={!this.state.loggedIn} className="App-intro">
+            Thank you for your attention, {this.state.username}
           </p>
+          <br/>
+          <p>GDPR compliant APP</p>
         </div>
     );
   }
