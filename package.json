@@ -8,6 +8,7 @@
     "react-bootstrap": "^0.32.3",
     "react-dom": "^16.4.2",
     "react-interval": "^2.0.2",
+    "react-minimal-pie-chart": "^3.2.0",
     "react-scripts": "1.1.5",
     "react-table": "^6.8.6"
   },

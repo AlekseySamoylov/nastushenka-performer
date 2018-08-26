@@ -6,20 +6,37 @@ body {
 
 .q1 {
   color: white;
-  background-color: #fe6600;
+  background-color: #c13932;
+  height: 100%;
+  border-radius: 5px;
+  text-align: center;
+  padding-top: 10px;
 }
 
 .q2 {
   color: white;
-  background-color: #2c8011;
+  background-color: #40aa40;
+  height: 100%;
+  border-radius: 5px;
+  text-align: center;
+  padding-top: 10px;
+
 }
 
 .q3 {
   color: white;
-  background-color: #1862b5;
+  background-color: #559faa;
+  height: 100%;
+  border-radius: 5px;
+  text-align: center;
+  padding-top: 10px;
 }
 
 .q4 {
   color: white;
-  background-color: goldenrod;
+  background-color: #daa520;
+  height: 100%;
+  border-radius: 5px;
+  text-align: center;
+  padding-top: 10px;
 }
