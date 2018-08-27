@@ -5,6 +5,7 @@ import {Button, ControlLabel, FormControl, FormGroup} from "react-bootstrap";
 import ReactTable from "react-table";
 import ReactInterval from 'react-interval';
 import PieChart from 'react-minimal-pie-chart';
+import * as axios from "axios";
 
 class App extends Component {
 
@@ -226,6 +227,18 @@ class App extends Component {
     } else {
       this.setState({q4: this.state.q4 + 10})
     }
+
+    axios.post('/api/userlog', {
+      username: this.state.username,
+      taskName: task.name,
+      taskType: task.type
+    })
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
   }
 
   reportBadWork() {
@@ -241,6 +254,17 @@ class App extends Component {
     });
     localStorage.setItem("timeLogList", JSON.stringify(timeLogList));
     this.setState({q4: this.state.q4 + 10});
+    axios.post('/api/userlog', {
+      username: this.state.username,
+      taskName: "auto reported",
+      taskType: "q4"
+    })
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
   }
 
   closeTask(task) {
@@ -266,6 +290,17 @@ class App extends Component {
       this.setState({q4: this.state.q4 + 10})
     }
     this.deleteTask(task.id);
+    axios.post('/api/userlog', {
+      username: this.state.username,
+      taskName: task.name,
+      taskType: task.type
+    })
+    .then(function(response) {
+      console.log(response);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
   }
 
   render() {
@@ -299,8 +334,8 @@ class App extends Component {
                   className="btn-dark"
                   onClick={() => {
                     this.setState({
-                      openDisplay: this.state.openDisplay === 0 ? 1
-                          : this.state.openDisplay === 1 ? 2 : 0
+                      openDisplay: this.state.openDisplay === 2 ? 1
+                          : this.state.openDisplay === 1 ? 0 : 2
                     })
                   }}>Switch</Button>
             </div>
