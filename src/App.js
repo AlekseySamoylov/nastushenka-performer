@@ -36,7 +36,8 @@ class App extends Component {
       closedTaskList: JSON.parse(localStorage.getItem('closedTaskList')) == null
           ?
           [] : JSON.parse(localStorage.getItem('closedTaskList')),
-      isWorkReported: true
+      isWorkReported: true,
+      minutes: 30
     };
 
     this.login = this.login.bind(this);
@@ -54,6 +55,24 @@ class App extends Component {
     this.createQ3Task = this.createQ3Task.bind(this);
     this.createQ4Task = this.createQ4Task.bind(this);
     this.clearAllData = this.clearAllData.bind(this);
+    this.sendNotification = this.sendNotification.bind(this);
+  }
+
+  sendNotification() {
+    if (!("Notification" in window)) {
+      alert("This browser does not support system notifications");
+    }
+    else if (Notification.permission === "granted") {
+      new Notification("Report the time!");
+    }
+
+    else if (Notification.permission !== 'denied') {
+      Notification.requestPermission(function(permission) {
+        if (permission === "granted") {
+          new Notification("Report the time!");
+        }
+      });
+    }
   }
 
   handleKeyPressLogin(target) {
@@ -309,6 +328,7 @@ class App extends Component {
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo"/>
             <h1 className="App-title">Nastushenka Performer</h1>
+            <p>{this.state.minutes} min before reporting</p>
           </header>
           <br/>
           <div className="container" hidden={this.state.loggedIn}>
@@ -345,6 +365,14 @@ class App extends Component {
                   enabled={true}
                   callback={this.handleSaveData}/>
               <ReactInterval
+                  timeout={1000 * 60}
+                  enabled={true}
+                  callback={() => {
+                    this.setState({
+                      minutes: --this.state.minutes
+                    })
+                  }}/>
+              <ReactInterval
                   timeout={1000 * 60 * 30}
                   enabled={true}
                   callback={() => {
@@ -352,6 +380,7 @@ class App extends Component {
                       openDisplay: 1,
                       isWorkReported: false
                     });
+                    this.sendNotification();
                     setTimeout(() => {
                       if (!this.state.isWorkReported) {
                         this.reportBadWork();
@@ -560,6 +589,7 @@ class App extends Component {
           <Button className="btn-danger" onClick={this.clearAllData}>
             Clear All Data
           </Button>
+          <Button onClick={this.sendNotification}>Test notification</Button>
           <p hidden={!this.state.loggedIn} className="App-intro">
             Thank you for your attention, {this.state.username}
           </p>
