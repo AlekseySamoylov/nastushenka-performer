@@ -1,6 +1,6 @@
 version: '2'
 services:
   nastushenka_performer:
-    image: alekseysamoylov/nastushenka_performer:1.7
+    image: alekseysamoylov/nastushenka_performer:latest
     ports:
     - '80:80'

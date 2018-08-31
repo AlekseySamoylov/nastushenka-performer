@@ -1,0 +1,8 @@
+version: '2'
+services:
+  nastushenka_performer:
+    build:
+      context: ../../.
+      dockerfile: DockerfileDev
+    ports:
+    - '80:80'

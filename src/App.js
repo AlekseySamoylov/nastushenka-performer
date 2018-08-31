@@ -107,7 +107,7 @@ class App extends Component {
       timeLogList: [],
       closedTaskList: [],
       isWorkReported: true
-    })
+    });
   }
 
   handleSaveData() {
@@ -378,12 +378,12 @@ class App extends Component {
                   callback={() => {
                     this.setState({
                       openDisplay: 1,
-                      isWorkReported: false
+                      isWorkReported: false,
+                      minutes: 30
                     });
                     this.sendNotification();
                     setTimeout(() => {
                       if (!this.state.isWorkReported) {
-                        this.reportBadWork();
                         this.setState({
                           isWorkReported: true,
                           openDisplay: 0
