@@ -4,7 +4,7 @@ node {
         stage('Clone repository') {
             checkout scm
         }
-        stage('Build Jar') {
+        stage('Build') {
             sh 'bash ./build.sh'
         }
         stage('Build Docker image') {
