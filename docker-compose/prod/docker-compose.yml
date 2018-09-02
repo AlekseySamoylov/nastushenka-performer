@@ -2,6 +2,8 @@ version: '3.3'
 services:
   nastushenka_performer:
     image: alekseysamoylov/nastushenka_performer:latest
+    volumes:
+    - /root/travelblog/wordpress_files:/var/www/html/alltriptips
     ports:
     - '80:80'
 
@@ -10,7 +12,7 @@ services:
     - db
     image: wordpress:latest
     volumes:
-    - /root/travelblog/wordpress_files:/var/www/html
+    - /root/travelblog/wordpress_files:/var/www/html/alltriptips
     ports:
     - "3000:80"
     restart: always
