@@ -326,7 +326,6 @@ class App extends Component {
     return (
         <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo"/>
             <h1 className="App-title">Nastushenka Performer</h1>
             <p>{this.state.minutes} min before reporting</p>
           </header>
@@ -445,7 +444,7 @@ class App extends Component {
                 <FormGroup>
                   <Button
                       disabled={this.state.newTaskName.length < 5}
-                      style={{background: "#c13932"}}
+                      style={{background: "#00c1b1"}}
                       onClick={this.createQ1Task}>
                     Important and Urgent
                   </Button>
@@ -459,7 +458,7 @@ class App extends Component {
                 <FormGroup>
                   <Button
                       disabled={this.state.newTaskName.length < 5}
-                      style={{background: "#559faa"}}
+                      style={{background: "#0073d3"}}
                       onClick={this.createQ3Task}>
                     Not Important and Urgent
                   </Button>
@@ -509,9 +508,9 @@ class App extends Component {
                           animate={true}
                           lineWidth={50}
                           data={[
-                            {value: this.state.q1, color: '#c13932'},
+                            {value: this.state.q1, color: '#00c1b1'},
                             {value: this.state.q2, color: '#40aa40'},
-                            {value: this.state.q3, color: '#559faa'},
+                            {value: this.state.q3, color: '#0073d3'},
                             {value: this.state.q4, color: '#daa520'}
                           ]}
                 />
