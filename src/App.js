@@ -444,13 +444,13 @@ class App extends Component {
                 <FormGroup>
                   <Button
                       disabled={this.state.newTaskName.length < 5}
-                      style={{background: "#00c1b1"}}
+                      style={{background: "#7429c6"}}
                       onClick={this.createQ1Task}>
                     Important and Urgent
                   </Button>
                   <Button
                       disabled={this.state.newTaskName.length < 5}
-                      style={{background: "#40aa40"}}
+                      style={{background: "#11a829"}}
                       onClick={this.createQ2Task}>
                     Important and Not Urgent
                   </Button>
@@ -458,13 +458,13 @@ class App extends Component {
                 <FormGroup>
                   <Button
                       disabled={this.state.newTaskName.length < 5}
-                      style={{background: "#0073d3"}}
+                      style={{background: "#daa520"}}
                       onClick={this.createQ3Task}>
                     Not Important and Urgent
                   </Button>
                   <Button
                       disabled={this.state.newTaskName.length < 5}
-                      style={{background: "#daa520"}}
+                      style={{background: "#c13932"}}
                       onClick={this.createQ4Task}>
                     Not Important and Not Urgent
                   </Button>
@@ -508,10 +508,10 @@ class App extends Component {
                           animate={true}
                           lineWidth={50}
                           data={[
-                            {value: this.state.q1, color: '#00c1b1'},
-                            {value: this.state.q2, color: '#40aa40'},
-                            {value: this.state.q3, color: '#0073d3'},
-                            {value: this.state.q4, color: '#daa520'}
+                            {value: this.state.q1, color: '#7429c6'},
+                            {value: this.state.q2, color: '#11a829'},
+                            {value: this.state.q3, color: '#daa520'},
+                            {value: this.state.q4, color: '#c13932'}
                           ]}
                 />
                 <h2>Logged work</h2>
