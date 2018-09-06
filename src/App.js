@@ -6,6 +6,7 @@ import ReactTable from "react-table";
 import ReactInterval from 'react-interval';
 import PieChart from 'react-minimal-pie-chart';
 import * as axios from "axios";
+import Plot from 'react-plotly.js';
 
 class App extends Component {
 
@@ -341,7 +342,7 @@ class App extends Component {
             </FormGroup>
             <FormGroup>
               <Button
-                  className="btn-dark"
+                  className="btn-outline-dark"
                   onClick={this.login}>
                 Login
               </Button>
@@ -350,13 +351,36 @@ class App extends Component {
           <div hidden={!this.state.loggedIn}>
             <div className="container">
               <Button
-                  className="btn-dark"
+                  className="btn-outline-dark"
                   onClick={() => {
                     this.setState({
-                      openDisplay: this.state.openDisplay === 2 ? 1
-                          : this.state.openDisplay === 1 ? 0 : 2
+                      openDisplay: 0
                     })
-                  }}>Switch</Button>
+                  }}>Manage</Button>
+              <span> </span>
+              <Button
+                  className="btn-outline-dark"
+                  onClick={() => {
+                    this.setState({
+                      openDisplay: 1
+                    })
+                  }}>Report</Button>
+              <span> </span>
+              <Button
+                  className="btn-outline-dark"
+                  onClick={() => {
+                    this.setState({
+                      openDisplay: 2
+                    })
+                  }}>Results</Button>
+              <span> </span>
+              <Button
+                  className="btn-outline-dark"
+                  onClick={() => {
+                    this.setState({
+                      openDisplay: 3
+                    })
+                  }}>Charts</Button>
             </div>
             <div>
               <ReactInterval
@@ -582,13 +606,28 @@ class App extends Component {
                 />
               </div>
             </div>
+            <div hidden={this.state.openDisplay !== 3} className="container">
+              <br/>
+              <Plot
+                  data={[
+                    {
+                      x: [1, 2, 3],
+                      y: [2, 6, 3],
+                      type: 'scatter',
+                      mode: 'lines+points',
+                      marker: {color: 'red'},
+                    },
+                    {type: 'bar', x: [1, 2, 3], y: [2, 5, 3]},
+                  ]}
+                  layout={{width: 620, height: 440, title: 'A Fancy Plot'}}
+              />
+            </div>
           </div>
           <br/>
           <br/>
           <Button className="btn-danger" onClick={this.clearAllData}>
             Clear All Data
           </Button>
-          <Button onClick={this.sendNotification}>Test notification</Button>
           <p hidden={!this.state.loggedIn} className="App-intro">
             Thank you for your attention, {this.state.username}
           </p>
