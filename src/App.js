@@ -1,12 +1,19 @@
 import React, {Component} from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {Button, ControlLabel, FormControl, FormGroup} from "react-bootstrap";
 import ReactTable from "react-table";
 import ReactInterval from 'react-interval';
 import PieChart from 'react-minimal-pie-chart';
 import * as axios from "axios";
-import Plot from 'react-plotly.js';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid, Legend,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis, YAxis
+} from "recharts";
 
 class App extends Component {
 
@@ -38,7 +45,17 @@ class App extends Component {
           ?
           [] : JSON.parse(localStorage.getItem('closedTaskList')),
       isWorkReported: true,
-      minutes: 30
+      minutes: 30,
+      currentWeekActivities: [
+        {name: 'Monday', ui: 4000, nui: 2400, uni: 2400, nuni: 1400},
+        {name: 'Tuesday', ui: 3000, nui: 1398, uni: 2210, nuni: 1400},
+        {name: 'Wednsday', ui: 2000, nui: 9800, uni: 2290, nuni: 1400},
+        {name: 'Thursday', ui: 2780, nui: 3908, uni: 2000, nuni: 1400},
+        {name: 'Friday', ui: 1890, nui: 4800, uni: 2181, nuni: 1400},
+        {name: 'Saturday', ui: 2390, nui: 3800, uni: 2500, nuni: 1400},
+        {name: 'Sunday', ui: 3490, nui: 4300, uni: 2100, nuni: 1400},
+      ],
+      currentWeekTaskList: []
     };
 
     this.login = this.login.bind(this);
@@ -608,18 +625,55 @@ class App extends Component {
             </div>
             <div hidden={this.state.openDisplay !== 3} className="container">
               <br/>
-              <Plot
-                  data={[
+              <BarChart
+                  width={700}
+                  height={300}
+                  data={this.state.currentWeekActivities}
+                  margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+                <XAxis dataKey="name"/>
+
+                <YAxis/>
+                <CartesianGrid strokeDasharray="3 3"/>
+                <Tooltip/>
+                <Legend/>
+                <Bar name="Unrgent and Important" dataKey="ui" fill="#7429c6"/>
+                <Bar name="Not Unrgent and Important" dataKey="nui" fill="#11a829"/>
+                <Bar name="Unrgent and Not Important" dataKey="uni" fill="#daa520"/>
+                <Bar name="Not Unrgent and Not Important" dataKey="nuni" fill="#c13932"/>
+              </BarChart>
+
+              <h2>Logged work</h2>
+              <ReactTable
+                  data={this.state.currentWeekTaskList}
+                  columns={[
                     {
-                      x: [1, 2, 3],
-                      y: [2, 6, 3],
-                      type: 'scatter',
-                      mode: 'lines+points',
-                      marker: {color: 'red'},
+                      Header: "Time",
+                      maxWidth: 200,
+                      accessor: "time",
+                      Cell: row => (
+                          <p>{row.value.toString()}</p>
+                      )
                     },
-                    {type: 'bar', x: [1, 2, 3], y: [2, 5, 3]},
+                    {
+                      Header: "Task Type",
+                      maxWidth: 200,
+                      accessor: "taskType",
+                      Cell: row => (
+                          <div className={row.value}>
+                            <p>{row.value}</p>
+                          </div>
+                      )
+                    },
+                    {
+                      Header: "Task Name",
+                      accessor: "taskName",
+                      Cell: row => (
+                          <p>{row.value}</p>
+                      )
+                    }
                   ]}
-                  layout={{width: 620, height: 440, title: 'A Fancy Plot'}}
+                  defaultPageSize={5}
+                  className="-striped -highlight"
               />
             </div>
           </div>
